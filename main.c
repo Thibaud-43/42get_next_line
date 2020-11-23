@@ -10,7 +10,7 @@ int main(void)
 
 	bytes = 1;
 	i = 1;
-	fd = open("test/2.txt", O_RDONLY);
+	fd = open("test/1.txt", O_RDONLY);
 	while (bytes == 1)
 	{
 		bytes = get_next_line(fd, &line);

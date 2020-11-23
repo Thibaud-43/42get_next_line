@@ -6,13 +6,13 @@
 /*   By: trouchon <trouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 14:33:23 by trouchon          #+#    #+#             */
-/*   Updated: 2020/11/23 16:51:19 by trouchon         ###   ########.fr       */
+/*   Updated: 2020/11/23 17:35:15 by trouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
-int ft_check_inputs(int fd, char **line)
+
+static int			ft_check_inputs(int fd, char **line)
 {
 	char	test[1];
 
@@ -27,7 +27,7 @@ int ft_check_inputs(int fd, char **line)
 	return (0);
 }
 
-void	ft_set_line(char **line, char **str, int *ret)
+static void			ft_set_line(char **line, char **str, int *ret)
 {
 	int		i;
 	char	*tmp;
@@ -56,14 +56,25 @@ void	ft_set_line(char **line, char **str, int *ret)
 	}
 }
 
-int		get_next_line(int fd, char **line)
+static int			get_next_line2(char **line, char **str, int *ret, int bytes)
+{
+	if (bytes == 0 && *str == NULL)
+	{
+		*line = ft_strdup("");
+		return (0);
+	}
+	ft_set_line(line, str, ret);
+	return (*ret);
+}
+
+int					get_next_line(int fd, char **line)
 {
 	static char		*str[256];
 	char			*tmp;
 	char			buf[BUFFER_SIZE + 1];
 	int				ret;
 	int				bytes;
-		
+
 	ret = 1;
 	if (ft_check_inputs(fd, line))
 		return (-1);
@@ -80,13 +91,7 @@ int		get_next_line(int fd, char **line)
 		}
 		ret = 1;
 		if (ft_strchr(str[fd], '\n'))
-			break;
+			break ;
 	}
-	if (bytes == 0 && str[fd] == NULL)
-	{
-		*line = ft_strdup("");
-		return (0);
-	}
-	ft_set_line(line, &(str[fd]), &ret);
-	return(ret);	
+	return (get_next_line2(line, &(str[fd]), &ret, bytes));
 }

@@ -6,7 +6,7 @@
 /*   By: trouchon <trouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 17:11:57 by trouchon          #+#    #+#             */
-/*   Updated: 2020/11/20 18:43:58 by trouchon         ###   ########.fr       */
+/*   Updated: 2020/11/23 17:37:35 by trouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,11 @@ int		ft_strlen(char *str)
 	return (i);
 }
 
-
-char    *ft_substr(char const *s, unsigned int start, size_t len)
+char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
-	size_t  k;
-	char    *dst;
-	
+	size_t	k;
+	char	*dst;
+
 	k = 0;
 	if (!s || (size_t)start >= (size_t)ft_strlen((char*)s))
 		return (0);

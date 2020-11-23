@@ -6,7 +6,7 @@
 /*   By: trouchon <trouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 17:10:17 by trouchon          #+#    #+#             */
-/*   Updated: 2020/11/23 14:37:25 by trouchon         ###   ########.fr       */
+/*   Updated: 2020/11/23 17:38:09 by trouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <sys/stat.h>
 # include <fcntl.h>
 
-char    *ft_substr(char const *s, unsigned int start, size_t len);
+char	*ft_substr(char const *s, unsigned int start, size_t len);
 int		get_next_line(int fd, char **line);
 char	*ft_strdup(const char *s);
 char	*ft_strjoin(char const *s1, char const *s2);
