@@ -6,7 +6,7 @@
 /*   By: trouchon <trouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 14:33:23 by trouchon          #+#    #+#             */
-/*   Updated: 2020/11/23 15:21:47 by trouchon         ###   ########.fr       */
+/*   Updated: 2020/11/23 15:52:30 by trouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	ft_set_line(char **line, char **str, int *ret)
 	char	*tmp;
 
 	i = 0;
-	while ((*str)[i] != '\n' && (*str)[i] != '\n')
+	while ((*str)[i] != '\n' && (*str)[i])
 		i++;
 	if ((*str)[i] == 0)
 	{
@@ -49,7 +49,7 @@ void	ft_set_line(char **line, char **str, int *ret)
 		tmp = ft_strdup(&((*str)[i + 1]));
 		free(*str);
 		(*str) = tmp;
-		if ((*str)[0] == '\0')
+		if ((*str)[0] == '\0' && (BUFFER_SIZE != 1))
 		{
 			free(*str);
 			*str = NULL;
@@ -71,6 +71,7 @@ int		get_next_line(int fd, char **line)
 		return (-1);
 	while ((bytes = read(fd, buf, BUFFER_SIZE)) > 0)
 	{
+		buf[bytes] = '\0';
 		if (!str)
 			str = ft_strdup(buf);
 		else
@@ -82,6 +83,6 @@ int		get_next_line(int fd, char **line)
 		if (ft_strchr(str, '\n'))
 			break;
 	}
-	ft_set_line(line, &str, &ret);
+	//ft_set_line(line, &str, &ret);
 	return(ret);	
 }

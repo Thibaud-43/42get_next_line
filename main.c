@@ -8,7 +8,7 @@ int main(void)
 	int bytes;
 
 	bytes = 1;
-	fd = open("test/1.txt", O_RDONLY);
+	fd = open("test/3.txt", O_RDONLY);
 	while (bytes == 1)
 	{
 		bytes = get_next_line(fd, &line);
