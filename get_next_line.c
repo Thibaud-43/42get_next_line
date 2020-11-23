@@ -5,99 +5,115 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: trouchon <trouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/23 09:26:37 by trouchon          #+#    #+#             */
-/*   Updated: 2020/11/23 11:25:37 by trouchon         ###   ########.fr       */
+/*   Created: 2020/11/22 14:33:23 by trouchon          #+#    #+#             */
+/*   Updated: 2020/11/23 11:59:11 by trouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
 #include <stdio.h>
+# define RET_VALUE(ret)	ret > 0 ? 1 : ret
 
-int		ft_read(char **line, char **str)
+static int			gnl_verify_line(char **stack, char **line)
 {
-	int		i;
-	char	*tmp;
+	char			*tmp_stack;
+	char			*strchr_stack;
+	int				i;
 
 	i = 0;
-	while ((*str)[i] != '\n' && (*str)[i] != '\0')
-		i++;
-	if ((*str)[i] == '\n')
-	{
-		*line = ft_substr((*str), 0, i);
-		tmp = ft_strdup((*str) + (i + 1));
-		free ((*str));
-		(*str) = tmp;
-		if ((*str)[0] == '\0')
-		{
-			free((*str));
-			(*str) = NULL;
-		}
-	}
-	else
-	{
-		*line = ft_strdup((*str));
-		free((*str));
-		(*str) = NULL;
-	}
+	strchr_stack = *stack;
+	while (strchr_stack[i] != '\n')
+		if (!strchr_stack[i++])
+			return (0);
+	tmp_stack = &strchr_stack[i];
+	*tmp_stack = '\0';
+	*line = ft_strdup(*stack);
+	*stack = ft_strdup(tmp_stack + 1);
 	return (1);
 }
 
-int		ft_generate_output(int fd, char **line, char *str[256], int bytes)
+/*
+** Reads into the heap, from the file descriptors, a specific number of bytes
+** defined by the BUFF_SIZE macro in the get_nex_line.h file. It's going to
+** continue the reading when the return value of the read function is greater
+** than zero (no errors, or if there is nothing else to read).
+** If there is something in the stack, we will concatinate whatever is in
+** there, with whatever is read in the heap. If no, we will just add
+** whatever is in the heap into the stack. Then we will verify the stack to
+** see if there is a newline. If there is, we will break from the while loop
+** and force the positive ret value into a one (1), using the RET_VALUE() macro.
+** This answer form SO helped me visualize the stack and heap in a better way:
+** http://stackoverflow.com/a/1213360
+*/
+
+static	int			gnl_read_file(int fd, char *heap, char **stack, char **line)
 {
-	if (bytes < 0)
-		return (-1);
-	else if (bytes == 0 && str[fd] == NULL)
-		return (0);
-	else
-		return (ft_read(line, &str[fd]));
+	int				ret;
+	char			*tmp_stack;
 
-}
-
-int		get_next_line(int fd, char **line)
-{
-	static char		*str[256];
-	int				bytes;
-	char			buf[BUFFER_SIZE + 1];
-	char			*tmp;
-
-	if (fd < 0 || fd >= 256 || !line || (read(fd, str[fd], 0) < 0))
-		return (-1);
-	while ((bytes = read(fd, buf, BUFFER_SIZE)) > 0)
+	while ((ret = read(fd, heap, BUFFER_SIZE)) > 0)
 	{
-		buf[bytes] = '\0';
-		if (str[fd] == NULL)
-			str[fd] = ft_strdup(buf);
-		else
+		heap[ret] = '\0';
+		if (*stack)
 		{
-			tmp = ft_strjoin(str[fd], buf);
-			free(str[fd]);
-			str[fd] = tmp;
+			tmp_stack = *stack;
+			*stack = ft_strjoin(tmp_stack, heap);
+			free(tmp_stack);
+			tmp_stack = NULL;
 		}
-		if ((ft_strchr(str[fd], '\n')))
-			break;
-	}	
-	return ((ft_generate_output(fd, line, str, bytes)));
+		else
+			*stack = ft_strdup(heap);
+		if (gnl_verify_line(stack, line))
+			break ;
+	}
+	return (RET_VALUE(ret));
 }
 
+/*
+** This is where the real shit happens.
+** It first checks for errors (is the line is empty, if the number of the file
+** descriptor is invalid, or if it fails to allocate the heap), so it can return
+** a minus one (-1) if needed.
+**
+** If there is something in the stack (because we are using a static variable),
+** we verify that there is a newline. If not, we allocate memory for the heap,
+** and we read the file.
+**
+** When the reading of the file ends, we will free the heap (we're not gonna
+** use it anymore), and we check for the value of ret (if it's 1 or -1, return
+** that, if the stack is empty, return 0). If neither of these conditions are
+** valid, we assing line to the value of the stack, free the stack, and return 1
+**
+** A good read about file descriptors:
+** http://www.bottomupcs.com/file_descriptors.xhtml
+*/
 
-int main(void)
+int					get_next_line(int const fd, char **line)
 {
-	int		fd;
-	char 	*line;
-	int		i;
-	int		bytes;
-	
-	i = 1;
-	fd = open("1.txt", O_RDONLY);
-	bytes = 1;
-	if (fd < 0)
-		return (0);
-	while (bytes)
+	static char		*stack[256];
+	char			*heap;
+	int				ret;
+	int				i;
+
+	if (!line || (fd < 0 || fd >= 256) || (read(fd, stack[fd], 0) < 0) \
+		|| !(heap = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1)))
+		return (-1);
+	if (stack[fd])
+		if (gnl_verify_line(&stack[fd], line))
+			return (1);
+	i = 0;
+	while (i < BUFFER_SIZE)
+		heap[i++] = '\0';
+	ret = gnl_read_file(fd, heap, &stack[fd], line);
+	free(heap);
+	if (ret != 0 || stack[fd] == NULL || stack[fd][0] == '\0')
 	{
-		bytes = get_next_line(fd, &line);
-		printf("|bytes %d|%s\n", bytes, line);
-		free(line);	
+		if (!ret && *line)
+			*line = NULL;
+		return (ret);
 	}
-	close (fd);
+	*line = stack[fd];
+	stack[fd] = NULL;
+	return (1);
 }
