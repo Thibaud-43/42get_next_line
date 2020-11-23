@@ -6,7 +6,7 @@
 /*   By: trouchon <trouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 14:33:23 by trouchon          #+#    #+#             */
-/*   Updated: 2020/11/23 15:52:30 by trouchon         ###   ########.fr       */
+/*   Updated: 2020/11/23 16:38:14 by trouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,7 @@ int ft_check_inputs(int fd, char **line)
 		return (1);
 	else if (BUFFER_SIZE < 1)
 		return (1);
-	else
-		return (0);
+	return (0);
 }
 
 void	ft_set_line(char **line, char **str, int *ret)
@@ -52,8 +51,7 @@ void	ft_set_line(char **line, char **str, int *ret)
 		if ((*str)[0] == '\0' && (BUFFER_SIZE != 1))
 		{
 			free(*str);
-			*str = NULL;
-			*ret = 0;
+			*str = ft_strdup("");
 		}
 	}
 }
@@ -63,9 +61,9 @@ int		get_next_line(int fd, char **line)
 	static char		*str;
 	char			*tmp;
 	char			buf[BUFFER_SIZE + 1];
-	int				bytes;
 	int				ret;
-	
+	int				bytes;
+		
 	ret = 1;
 	if (ft_check_inputs(fd, line))
 		return (-1);
@@ -80,9 +78,15 @@ int		get_next_line(int fd, char **line)
 			free(str);
 			str = tmp;
 		}
+		ret = 1;
 		if (ft_strchr(str, '\n'))
 			break;
 	}
-	//ft_set_line(line, &str, &ret);
+	if (bytes == 0 && str == NULL)
+	{
+		*line = ft_strdup("");
+		return (0);
+	}
+	ft_set_line(line, &str, &ret);
 	return(ret);	
 }

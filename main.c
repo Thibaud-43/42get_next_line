@@ -6,13 +6,16 @@ int main(void)
 	char *line;
 	int fd;
 	int bytes;
+	int i;
 
 	bytes = 1;
-	fd = open("test/3.txt", O_RDONLY);
+	i = 1;
+	fd = open("test/2.txt", O_RDONLY);
 	while (bytes == 1)
 	{
 		bytes = get_next_line(fd, &line);
-		printf("|bytes %d|%s\n",bytes, line);
+		printf("|LINE %d|(OUT %d)%s\n",i, bytes, line);
+		i++;
 		free(line);
 	}
 	close(fd);
