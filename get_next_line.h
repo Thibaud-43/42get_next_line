@@ -6,7 +6,7 @@
 /*   By: trouchon <trouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 17:10:17 by trouchon          #+#    #+#             */
-/*   Updated: 2020/11/20 18:40:26 by trouchon         ###   ########.fr       */
+/*   Updated: 2020/11/23 14:37:25 by trouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,5 +24,6 @@ int		get_next_line(int fd, char **line);
 char	*ft_strdup(const char *s);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strchr(const char *s, int c);
+int		ft_strlen(char *str);
 
 #endif
