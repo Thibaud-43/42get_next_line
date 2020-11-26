@@ -6,11 +6,11 @@
 /*   By: trouchon <trouchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 14:33:23 by trouchon          #+#    #+#             */
-/*   Updated: 2020/11/24 10:23:59 by trouchon         ###   ########.fr       */
+/*   Updated: 2020/11/24 10:19:40 by trouchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static int			ft_check_inputs(int fd, char **line)
 {
